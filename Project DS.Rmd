@@ -1,0 +1,114 @@
+---
+title: "Project"
+output: html_document
+---
+First we need to read the data from https://intro-datascience.s3.us-east-2.amazonaws.com/Resort01.csv
+
+```{r}
+library(tidyverse)
+resortData <- read_csv("https://intro-datascience.s3.us-east-2.amazonaws.com/Resort01.csv")
+# Reading data to resortData
+```
+
+Looking at structure of resortData
+
+```{r}
+str(resortData)
+```
+
+
+```{r}
+hist(resortData$LeadTime,col="lightsalmon",breaks=60)
+
+```
+
+Creating a bar chart to represent proportion of cancellation by market segment
+```{r}
+library(ggplot2)
+by_mktSeg <- resortData %>% group_by(MarketSegment,IsCanceled) %>% summarise (
+  countrecords = n()
+)
+```
+
+
+
+```{r}
+by_mktSeg$canceledVariable <- ifelse(by_mktSeg$IsCanceled==1,"canceled","not canceled")
+ggplot(data=by_mktSeg,aes(x=MarketSegment,y=countrecords,fill=canceledVariable)) + geom_bar(stat="identity",position=position_dodge()) + ggtitle("Count of Reservations by Market Segment & by canceled status")
+
+```
+
+
+```{r}
+library(dplyr)
+by_custType <- resortData %>% group_by(CustomerType,canceledStatus)
+by_custType <- by_custType %>% summarise (
+   countrecords = n()
+)
+ggplot(data=by_custType,aes(x=CustomerType,y=countrecords,fill=canceledStatus)) + geom_bar(stat="identity",position=position_dodge()) + ggtitle("Count of Reservations by Customer type & by canceled status") + scale_fill_brewer(palette="Oranges") + theme_classic()
+```
+
+
+```{r}
+resortData$canceledStatus <- ifelse(resortData$IsCanceled==1,"canceled","not canceled") 
+library(ggplot2)
+ggplot(resortData,aes(x=canceledStatus,y=LeadTime,fill=canceledStatus))+geom_boxplot() + ggtitle("Boxplot of lead time by Canceled Status") +  scale_fill_brewer(palette="Blues") + theme_classic()
+```
+
+```{r}
+canceledResortData <- resortData[resortData$IsCanceled==1,]
+ggplot(canceledResortData,aes(x=MarketSegment,y=LeadTime,fill=MarketSegment))+geom_boxplot() + ggtitle("Boxplot of lead time by Market Segment for Canceled Observation") +  scale_fill_brewer(palette="Pastel1") 
+```
+
+
+
+```{r}
+ggplot(canceledResortData,aes(x=CustomerType,y=LeadTime,fill=CustomerType))+geom_boxplot() + ggtitle("Boxplot of lead time by CustomerType for Canceled Observation") +  scale_fill_brewer(palette="PiYg") 
+```
+
+
+```{r}
+notCanceledResortData <- resortData[resortData$IsCanceled==0,]
+ggplot(notCanceledResortData,aes(x=MarketSegment,y=LeadTime,fill=MarketSegment))+geom_boxplot() + ggtitle("Boxplot of lead time by Market Segment for Not Canceled Observation") + scale_fill_brewer(palette="Blues") + theme_classic()
+```
+
+
+
+```{r}
+ggplot(notCanceledResortData,aes(x=CustomerType,y=LeadTime,fill=CustomerType))+geom_boxplot() + ggtitle("Boxplot of lead time by CustomerType for Not Canceled Observation") +  scale_fill_brewer(palette="Pastel2") 
+```
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+
+
+```{r}
+
+
+```
+
+
+
+
+
+
